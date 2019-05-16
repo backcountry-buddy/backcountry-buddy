@@ -1,0 +1,109 @@
+version: "3.7"
+services:
+  # NOTE: You'll need to add this to your hosts
+  # file on linux or to your resolver on OS X:
+  # 127.0.0.1 backcountrybuddy.com
+  # linux sudo echo -n "domain *.docker\nnameserver 127.0.0.1\nnameserver port 19322" >> /etc/hosts
+  # OS X:
+  # sudo mkdir /etc/resolver  \
+  #   && sudo echo -n "nameserver 127.0.0.1\nnameserver port 19322" > /etc/resolver/docker
+  proxy:
+    image: codekitchen/dinghy-http-proxy:latest
+    environment:
+      DNS_IP: 127.0.0.1
+      HOSTMACHINE_IP: 127.0.0.1
+      DOMAIN_TLD: docker
+      DEFAULT_HOST: www.backcountrybuddy.docker
+    # These bind to your host (e.g. Mac machine to container ports.)
+    # below is shorthand for:
+    # ports:
+    #   - target: 80
+    #     published: 80
+    #     protocol: tcp
+    #     mode: host
+    ports:
+      - 80:80
+      - 443:443
+      - 19322:19322/udp
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    depends_on:
+      - proxy-internal
+    networks:
+      - buddynet
+      - docker-internal-dns
+
+  proxy-internal:
+    ##
+    # A work around to allow internal services to connect to other services using their external names.
+    # Example: screenshot-svc is able to resolve the DNS name dashboard.appinsights.devlocal, via this container
+    # @see https://github.com/codekitchen/dinghy-http-proxy
+    # @see ./proxy-internal/Dockerfile
+    #
+    build:
+      context: ./proxy-internal
+      dockerfile: Dockerfile
+    environment:
+      CONTAINER_NAME: docker-proxy-internal
+      DNS_IP: 10.5.5.5
+      HOSTMACHINE_IP: 10.5.5.5
+      DOMAIN_TLD: docker
+      DEFAULT_HOST: www.backcountrybuddy.docker
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+    - ./contrib/certs/:/etc/nginx/certs
+    networks:
+      buddynet:
+      docker-internal-dns:
+        # Choose a random, internal, local ip address for our internal proxy
+        # 10.0.0.0/8 is considered "private" so the intent for the dcdns netowrk
+        # is to allow any container to use it to communicate to this "dns server"
+        # 10.5.5.5 seemed like an address that would be unlinely to be needed
+        # at any point in the future, so it was chosen.
+        ipv4_address: 10.5.5.5
+
+  staticfiles:
+    # could be the webpack/whatever dev server to the static files instead.
+    image: nginx:1.16.0-alpine
+    environment:
+      VIRTUAL_HOST: staticfiles.docker
+    depends_on:
+      - api
+      - proxy
+    # volumes:
+    #   - ./app/build/:/etc/nginx/placetostaticfiles
+    # healthcheck:
+    #   test:
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 1m
+    networks:
+      - buddynet
+      - docker-internal-dns
+  # webpack:
+  api:
+    image: node:12-alpine
+    environment:
+      VIRTUAL_HOST: api.backcountrybuddy.docker
+    depends_on:
+      - proxy
+      #- docker-internal-dns
+    # healthcheck:
+    #   test:
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 1m
+    networks:
+      - buddynet
+      - docker-internal-dns
+networks:
+  buddynet:
+    driver: bridge
+  docker-internal-dns:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.5.5.0/24
