@@ -6,12 +6,14 @@
         {{tour.description}}
       </li>
     </ul>
-
   </div>
 </template>
 
 <script>
-import { db } from '@/config/db'
+import { db } from '@/config/db';
+// eslint-disable-next-line
+console.log(db.collection('tours'));
+
 export default {
   data: function () {
     return {
@@ -22,7 +24,7 @@ export default {
   firestore: {
     tours: db.collection('tours'),
   },
-}
+};
 </script>
 
 <style scoped>

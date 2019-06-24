@@ -1,6 +1,7 @@
-import Vue from 'vue'
-import App from './App.vue'
-import { firestorePlugin } from 'vuefire'
+import Vue from 'vue';
+import App from './App.vue';
+import * as lib from './lib';
+import { firestorePlugin } from 'vuefire';
 
 Vue.use(firestorePlugin)
 

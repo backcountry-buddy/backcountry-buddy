@@ -62,42 +62,55 @@ services:
         # at any point in the future, so it was chosen.
         ipv4_address: 10.5.5.5
 
-  staticfiles:
-    # could be the webpack/whatever dev server to the static files instead.
-    image: nginx:1.16.0-alpine
-    environment:
-      VIRTUAL_HOST: staticfiles.docker
-    depends_on:
-      - api
-      - proxy
-    # volumes:
-    #   - ./app/build/:/etc/nginx/placetostaticfiles
-    # healthcheck:
-    #   test:
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 1m
-    networks:
-      - buddynet
-      - docker-internal-dns
-  # webpack:
-  api:
-    image: node:12-alpine
-    environment:
-      VIRTUAL_HOST: api.backcountrybuddy.docker
-    depends_on:
-      - proxy
-      #- docker-internal-dns
-    # healthcheck:
-    #   test:
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 1m
-    networks:
-      - buddynet
-      - docker-internal-dns
+  # staticfiles:
+  #   # could be the webpack/whatever dev server to the static files instead.
+  #   image: nginx:1.16.0-alpine
+  #   environment:
+  #     VIRTUAL_HOST: staticfiles.docker
+  #   depends_on:
+  #     - api
+  #     - proxy
+  #   # volumes:
+  #   #   - ./app/build/:/etc/nginx/placetostaticfiles
+  #   # healthcheck:
+  #   #   test:
+  #   #   interval: 5s
+  #   #   timeout: 10s
+  #   #   retries: 3
+  #   #   start_period: 1m
+  #   networks:
+  #     - buddynet
+  #     - docker-internal-dns
+  # api:
+  #   image: node:12-alpine
+  #   environment:
+  #     VIRTUAL_HOST: api.backcountrybuddy.docker
+  #   depends_on:
+  #     - proxy
+  #     - proxy-internal
+  #   # healthcheck:
+  #   #   test:
+  #   #   interval: 5s
+  #   #   timeout: 10s
+  #   #   retries: 3
+  #   #   start_period: 1m
+  #   networks:
+  #     - buddynet
+  #     - docker-internal-dns
+  # firebase:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./dockerfiles/Dockerfile.firestore
+  #   environment:
+  #     VIRTUAL_HOST: firebase.backcountrybuddy.docker
+  #   depends_on:
+  #     - proxy
+  #     - proxy-internal
+  #   volumes:
+  #     - firebase
+  #   networks:
+  #     - buddynet
+  #     - docker-internal-dns
 networks:
   buddynet:
     driver: bridge
@@ -107,3 +120,5 @@ networks:
       driver: default
       config:
       - subnet: 10.5.5.0/24
+# volumes:
+#   firebase:
