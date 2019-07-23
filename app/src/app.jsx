@@ -30,7 +30,7 @@ const App = () => {
     <BaseContext.Provider value={initialState}>
       <BaseContext.Consumer>
         {/* TODO: Revisit this. */}
-        {() => <Base routeResult={routeResult} />}
+        {() => <Base routeResult={routeResult} {...state} />}
       </BaseContext.Consumer>
     </BaseContext.Provider>
   );
