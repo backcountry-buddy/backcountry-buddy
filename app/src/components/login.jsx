@@ -1,5 +1,9 @@
 import React from 'react';
 
+export function Logout() {
+  // call logout, etc
+}
+
 export default function Login(props) {
   return (
     <form name="login">
