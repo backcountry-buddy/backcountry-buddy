@@ -12,16 +12,24 @@
 
 <script>
 import { db } from '@/config/db'
+
+const plannedTours = db.collection('tours')
+  .where('plannedOn','>',new Date())
+
 export default {
   data: function () {
     return {
        tours: [],
+       filter: {}
     }
   },
 
-  firestore: {
-    tours: db.collection('tours'),
-  },
+  firestore() {
+    return {
+      // TODO: paginate
+      tours: plannedTours.limit(20)
+    }
+  }
 }
 </script>
 

@@ -1,17 +1,17 @@
 <template>
   <div id="app">
     <h1>Backcountry Buddy</h1>
-    <Tours/>
+    <TourList/>
   </div>
 </template>
 
 <script>
-import Tours from './components/Tours.vue'
+import TourList from './components/TourList.vue';
 
 export default {
   name: 'app',
   components: { 
-    Tours
+    TourList
   }
 }
 </script>
