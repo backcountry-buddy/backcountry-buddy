@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <h1>Backcountry Buddy</h1>
+  <div id="app" class="p-4">
+    <h1 class="text-xl font-bold">Backcountry Buddy</h1>
     <TourList/>
   </div>
 </template>
@@ -17,12 +17,7 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 </style>
