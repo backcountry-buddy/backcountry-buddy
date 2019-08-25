@@ -1,9 +1,10 @@
 <template>
   <div>
-    <h2>Tours</h2>
+    <h2 class="text-lg font-semibold">Planned Tours</h2>
 
-    <LocationFilter @setFilter="setFilter"  />
+    <LocationFilter @applyFilter="applyFilter" />
 
+    <!-- TODO: improve list view -->
     <ul>
       <li v-for="(tour, index) in tours"  v-bind:key="index">
         {{tour.description}}
@@ -31,31 +32,21 @@ export default {
   components: {
     LocationFilter
   },
+
   methods: {
-    setFilter(k,v) {
-      if (this.filter[k] === v) {
-        // filter is unchanged
-        return;
-      }
-      const filter = Object.assign({}, this.filter)
-      filter[k] = v;
-      if (k === 'country') {
-        delete filter.state;
-        delete filter.region;
-      }
-      if (k === 'state') {
-        delete filter.region;
-      }
+    applyFilter(filter) {
       this.filter = filter;
     }
   },
+
   firestore() {
     return {
-      // TODO: paginate
       tours: plannedTours.limit(20)
     }
   },
+
   watch: {
+    // there must be a better way to compose query objects...
     filter(f) {
       const queryScenario = Object.keys(f).length;
       switch (queryScenario) {
@@ -64,13 +55,13 @@ export default {
           this.$bind('tours', plannedTours
             .where('country', '==', f.country));
           break;
-        // country + tate
+        // country + state
         case 2:
           this.$bind('tours', plannedTours
             .where('country', '==', f.country)
             .where('state', '==', f.state));
           break;
-        // country + tate = region
+        // country + state = region
         case 3:
           this.$bind('tours', plannedTours
             .where('country', '==', f.country)

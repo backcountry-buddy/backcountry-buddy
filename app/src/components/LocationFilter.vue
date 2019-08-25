@@ -1,17 +1,23 @@
 <template>
   <div>
-    <!-- TODO: style better -->
+    <!-- TODO: improve UX -->
     <h3>Filter by location</h3>
-
-    <div>Selected: {{selectedCountry}} {{selectedState}}</div>
+    <div>Selected: {{appliedFilter.country}} {{appliedFilter.state}} {{appliedFilter.region}}</div>
     <ul>
       <li v-for="(states, country, index) in countries"  v-bind:key="index">
-        <a @click="selectCountry(country)" >{{country}}</a>
+        <a @click="updateFilter('country', country)" class="cursor-pointer text-blue-500">{{country}}</a>
       </li>
-      <li v-if="!!selectedCountry">
+      <li v-if="!!appliedFilter.country">
         <ul>
           <li v-for="(regions, state, index) in states" v-bind:key="index">
-            <a @click="selectState(state)">{{state}}</a>
+            <a @click="updateFilter('state', state)" class="cursor-pointer text-blue-500">{{state}}</a>
+          </li>
+        </ul>
+      </li>
+      <li v-if="(!!appliedFilter.country && !!appliedFilter.state)">
+        <ul>
+          <li v-for="(locations, region, index) in regions" v-bind:key="index">
+            <a @click="updateFilter('region', region)" class="cursor-pointer text-blue-500">{{region}}</a>
           </li>
         </ul>
       </li>
@@ -20,40 +26,46 @@
 </template>
 
 <script>
-import { db } from '@/config/db'
+import { db } from '@/config/db';
+
 export default {
   data: function () {
     return {
-       filter: {},
-       selectedCountry: null,
-       selectedState: null,
+       filterConfig: {},
+       appliedFilter: {}
     }
   },
 
   computed: {
     countries() {
-      return this.filter;
+      return this.filterConfig;
     },
     states() {
-      return this.filter[this.selectedCountry];
+      return this.filterConfig[this.appliedFilter.country];
+    },
+    regions() {
+      return this.filterConfig[this.appliedFilter.country][this.appliedFilter.state];
     }
   },
 
-  // TODO: consolidate
   methods: {
-    selectCountry(country) {
-      this.selectedCountry = country;
-      this.$emit('setFilter', 'country', country)
-    },
-    selectState(state) {
-      this.selectedState = state;
-      this.$emit('setFilter', 'state', state)
-    },
-
+    updateFilter(k,v) {
+      const appliedFilter = Object.assign({}, this.appliedFilter)
+      appliedFilter[k] = v;
+      if (k === 'country') {
+        delete appliedFilter.state;
+        delete appliedFilter.region;
+      }
+      if (k === 'state') {
+        delete appliedFilter.region;
+      }
+      this.appliedFilter = appliedFilter;
+      this.$emit('applyFilter', appliedFilter)
+    }
   },
 
   firestore: {
-    filter: db.collection('configs').doc('locationFilter'),
-  },
+    filterConfig: db.collection('configs').doc('locationFilter'),
+  }
 }
 </script>
