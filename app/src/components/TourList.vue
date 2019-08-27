@@ -3,7 +3,7 @@
     <h2 class="my-2 text-lg font-light text-center">Planned Tours</h2>
     <LocationFilter @applyFilter="applyFilter" />
     <ul>
-      <TourCard :tour="tour" v-for="(tour, index) in tours" v-bind:key="index" />
+      <TourCard v-for="(tour, index) in tours" :key="index" :tour="tour" />
     </ul>
   </div>
 </template>
@@ -17,27 +17,14 @@ import TourCard from "./TourCard.vue";
 const plannedTours = db.collection("tours").where("plannedOn", ">", new Date());
 
 export default {
-  data: function() {
-    return {
-      tours: [],
-      filter: {}
-    };
-  },
-
   components: {
     LocationFilter,
     TourCard
   },
-
-  methods: {
-    applyFilter(filter) {
-      this.filter = filter;
-    }
-  },
-
-  firestore() {
+  data: function() {
     return {
-      tours: plannedTours.limit(20)
+      tours: [],
+      filter: {}
     };
   },
 
@@ -74,6 +61,18 @@ export default {
           break;
       }
     }
+  },
+
+  methods: {
+    applyFilter(filter) {
+      this.filter = filter;
+    }
+  },
+
+  firestore() {
+    return {
+      tours: plannedTours.limit(20)
+    };
   }
 };
 </script>

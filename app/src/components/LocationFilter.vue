@@ -1,6 +1,8 @@
 <template>
   <div class="border p-2 my-4">
-    <h3 class="mb-2 italic font-light text-sm">Filter planned tours by location</h3>
+    <h3 class="mb-2 italic font-light text-sm">
+      Filter planned tours by location
+    </h3>
     <div class="flex justify-between items-center">
       <div>
         <select
@@ -9,7 +11,11 @@
           class="bg-gray-200 text-sm"
         >
           <option disabled value>Select a country</option>
-          <option v-for="(states, country, index) in countries" v-bind:key="index">{{country}}</option>
+          <option
+            v-for="(states, country, index) in countries"
+            v-bind:key="index"
+            >{{ country }}</option
+          >
         </select>
         <select
           v-if="!!appliedFilter.country"
@@ -18,7 +24,11 @@
           class="ml-2 bg-gray-200 text-sm"
         >
           <option disabled value>Select a state</option>
-          <option v-for="(regions, state, index) in states" v-bind:key="index">{{state}}</option>
+          <option
+            v-for="(regions, state, index) in states"
+            v-bind:key="index"
+            >{{ state }}</option
+          >
         </select>
         <select
           v-if="!!appliedFilter.state"
@@ -27,14 +37,20 @@
           class="ml-2 bg-gray-200 text-sm"
         >
           <option disabled value>Select a region</option>
-          <option v-for="(locactions, region, index) in regions" v-bind:key="index">{{region}}</option>
+          <option
+            v-for="(locactions, region, index) in regions"
+            v-bind:key="index"
+            >{{ region }}</option
+          >
         </select>
       </div>
       <button
         type="button"
         class="text-xs bg-gray-200 px-1 border"
         @click="resetFilter"
-      >reset filter</button>
+      >
+        reset filter
+      </button>
     </div>
   </div>
 </template>
