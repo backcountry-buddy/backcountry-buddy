@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="p-4 lg:mx-auto lg:w-1/2">
+  <div id="app" class="font-sans p-4 lg:mx-auto lg:w-1/2">
     <h1 class="text-xl font-semibold text-center">Backcountry Buddy</h1>
     <TourList />
   </div>
@@ -15,9 +15,3 @@ export default {
   }
 };
 </script>
-
-<style>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</style>
