@@ -1,0 +1,11 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 10,
+    "sourceType": "module"
+  },
+  "extends": ["airbnb", "plugin:prettier/recommended"],
+  "plugins": ["eslint-plugin-html", "prettier"],
+  "rules": {
+    "prettier/prettier": "warn"
+  }
+}
