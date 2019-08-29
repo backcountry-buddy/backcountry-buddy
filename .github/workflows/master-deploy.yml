@@ -1,0 +1,30 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'app/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - run: npm install -g yarn
+      - run: yarn global add firebase-tools
+      - run: cd app
+      - name: npm install, build and deploy
+        run: |
+          yarn install
+          yarn run build
+          firebase deploy --token "$FIREBASE_TOKEN" --only hosting
+        env:
+          CI: true
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
